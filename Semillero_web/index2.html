@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <form action="" >
+    <input type="text" name = "character" id = "search">
+    <button>Buscar</button>
+
+  </form>
+    <p id="mnada"></p>
+    <div id="root"></div>
+
+    <script>
+      const $ = (el) => document.querySelector(el);
+      let character = []
+      let timer
+
+      fetch("https://rickandmortyapi.com/api/character")
+        .then((data) => data.json())
+        .then((json) => {
+          console.log(json.results);
+          for (let i = 0; i < json.results.length; i++) {
+            character.push(json.results[i])
+            $("#root").innerHTML += `<div>
+                    <p> Nombre: ${json.results[i].name} </p>
+                        <br>
+                    <p> Genero: ${json.results[i].gender} </p>
+                        <br>
+                    <p id="${json.results[i].id}"> Estado: ${json.results[i].status} </p>
+                        <br>
+                    <p> Especie: ${json.results[i].species} </p> 
+                        <br>
+                    <p> Origen: ${json.results[i].origin.name} </p>
+                        <br>
+                    <img src="${json.results[i].image}" alt="imagen de ${json.results[i].name}" onclick="toggle_status(${json.results[i].id})">
+                    </div>`;
+          }
+        });
+      
+        function toggle_status(id) {
+          const element = document.getElementById(id);
+          if (element.innerHTML === "Estado: Alive") {
+            element.innerHTML = "Estado: Dead";
+          } else {
+            element.innerHTML = "Estado: Alive";
+          }
+        }
+
+        $('form').addEventListener('submit', (e) => {
+          e.preventDefault()
+          const character_filter = (e.target.character.value)
+          
+          $("#root").innerHTML = ""
+          for (let i = 0; i < character.length; i++) {
+            if (character[i].name.toLowerCase().includes(character_filter)) {
+                $("#root").innerHTML += `<div>
+                    <p> Nombre: ${character[i].name} </p>
+                      <br>
+                    <p> Genero: ${character[i].gender} </p>
+                      <br>
+                    <p> Estado: ${character[i].status} </p>
+                      <br>
+                    <p id = "${character[i].id}"> Especie: ${character[i].species} </p>
+                      <br>
+                    <p> Origen: ${character[i].origin.name} </p>
+                      <br>
+                    <img src="${character[i].image}" alt="imagen de ${character[i].name}" onclick="toggle_status(${character[i].id})">
+                    </div>`;
+            }
+          }
+        })
+
+        function obtenerDatos(e) {
+          
+          $('#search').addEventListener('keyup', (e) => {
+            e.preventDefault()
+            const character_filter = (e.target.value)
+  
+            $("#root").innerHTML = ""
+            for (let i = 0; i < character.length; i++) {
+              if (character[i].name.toLowerCase().includes(character_filter)) {
+                  $("#root").innerHTML += `<div>
+                      <p> Nombre: ${character[i].name} </p>
+                        <br>
+                      <p> Genero: ${character[i].gender } </p>
+                        <br>
+                      <p> Estado: ${character[i].status} </p>
+                        <br>
+                      <p id = "${character[i].id}"> Especie: ${character[i].species} </p>
+                        <br>
+                      <p> Origen: ${character[i].origin.name} </p>
+                        <br>
+                      <img src="${character[i].image}" alt="imagen de ${character[i].name}" onclick="toggle_status(${character[i].id})">
+                      </div>`;
+              }
+            }
+          })
+        }
+
+        $("#search").addEventListener("keyup", function(e) {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            console.log("searching")
+            obtenerDatos(e);
+          }, 1000)
+        })
+
+
+    </script>
+</body>
+</html>
